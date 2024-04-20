@@ -69,10 +69,7 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/Admin");
-const signInToken = (user) => {
-  try {
-    // Logging user information before generating token
-    console.log("Generating token for user:", user);
+
 const signInToken = (user) => {
   try {
     console.log("Generating token for user:", user);
@@ -85,7 +82,7 @@ const signInToken = (user) => {
         phone: user.phone,
         image: user.image,
       },
-      process.env.JWT_SECRET, // This is where the JWT secret key is used
+      process.env.JWT_SECRET,
       {
         expiresIn: "2d",
       }
@@ -97,59 +94,6 @@ const signInToken = (user) => {
     throw error;
   }
 };
-
-//     // Generating token using jwt.sign
-//     const token = jwt.sign(
-//       {
-//         _id: user._id,
-//         name: user.name,
-//         email: user.email,
-//         address: user.address,
-//         phone: user.phone,
-//         image: user.image,
-//       },
-//       process.env.JWT_SECRET, // JWT secret key from environment variables
-//       {
-//         expiresIn: "2d",
-//       }
-//     );
-
-//     // Logging the generated token
-//     console.log("Token generated successfully:", token);
-
-//     // Returning the generated token
-//     return token;
-//   } catch (error) {
-//     // Handling errors during token generation
-//     console.error("Error generating token:", error);
-//     throw error;
-//   }
-// };
-
-// const signInToken = (user) => {
-//   try {
-//     console.log("Generating token for user:", user);
-//     const token = jwt.sign(
-//       {
-//         _id: user._id,
-//         name: user.name,
-//         email: user.email,
-//         address: user.address,
-//         phone: user.phone,
-//         image: user.image,
-//       },
-//       process.env.JWT_SECRET,
-//       {
-//         expiresIn: "2d",
-//       }
-//     );
-//     console.log("Token generated successfully:", token);
-//     return token;
-//   } catch (error) {
-//     console.error("Error generating token:", error);
-//     throw error;
-//   }
-// };
 
 const tokenForVerify = (user) => {
   try {
@@ -214,4 +158,3 @@ module.exports = {
   isAuth,
   isAdmin,
 };
-
