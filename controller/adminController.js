@@ -90,11 +90,22 @@ const registerAdmin = async (req, res) => {
 
 const loginAdmin = async (req, res) => {
   try {
-    console.log("Request body:", req.body);
+    console.log("Login request body:", req.body);
     const admin = await Admin.findOne({ email: req.body.email });
     console.log("Admin found:", admin);
 
-    if (admin && bcrypt.compareSync(req.body.password, admin.password)) {
+    if (!admin) {
+      console.log("Admin not found for email:", req.body.email);
+      return res.status(401).send({
+        message: "Invalid Email or password!",
+        redirectToLogin: true 
+      });
+    }
+
+    console.log("Comparing passwords...");
+    const passwordMatch = bcrypt.compareSync(req.body.password, admin.password);
+
+    if (passwordMatch) {
       console.log("Password is correct");
 
       const token = signInToken(admin);
@@ -109,17 +120,53 @@ const loginAdmin = async (req, res) => {
         image: admin.image,
       });
     } else {
+      console.log("Password is incorrect");
       res.status(401).send({
         message: "Invalid Email or password!",
-        redirectToLogin: true // Add this flag to indicate redirection
+        redirectToLogin: true 
       });
     }
   } catch (err) {
+    console.error("Error in loginAdmin:", err);
     res.status(500).send({
       message: err.message,
     });
   }
 };
+
+
+// const loginAdmin = async (req, res) => {
+//   try {
+//     console.log("Request body:", req.body);
+//     const admin = await Admin.findOne({ email: req.body.email });
+//     console.log("Admin found:", admin);
+
+//     if (admin && bcrypt.compareSync(req.body.password, admin.password)) {
+//       console.log("Password is correct");
+
+//       const token = signInToken(admin);
+//       console.log("Generated token:", token);
+
+//       res.send({
+//         token,
+//         _id: admin._id,
+//         name: admin.name,
+//         phone: admin.phone,
+//         email: admin.email,
+//         image: admin.image,
+//       });
+//     } else {
+//       res.status(401).send({
+//         message: "Invalid Email or password!",
+//         redirectToLogin: true // Add this flag to indicate redirection
+//       });
+//     }
+//   } catch (err) {
+//     res.status(500).send({
+//       message: err.message,
+//     });
+//   }
+// };
 
 const forgetPassword = async (req, res) => {
   const isAdded = await Admin.findOne({ email: req.body.verifyEmail });
